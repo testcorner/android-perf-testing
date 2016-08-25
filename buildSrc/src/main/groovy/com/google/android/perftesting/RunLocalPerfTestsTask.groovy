@@ -51,7 +51,6 @@ public class RunLocalPerfTestsTask extends DefaultTask {
 
     @TaskAction
     void execute(IncrementalTaskInputs inputs) {
-        //mLogger.warn("Starting monkeyrunner")
         ProcessBuilder processBuilder = new ProcessBuilder()
 
         def rootDir = getProject().getRootDir().getAbsolutePath()
@@ -68,7 +67,6 @@ public class RunLocalPerfTestsTask extends DefaultTask {
         if (process.exitValue() != 0) {
             throw new GradleException("Test run didn't complete")
         }
-        //mLogger.warn("Monkeyrunner complete")
     }
 
     public void setDeviceId(String deviceId) {

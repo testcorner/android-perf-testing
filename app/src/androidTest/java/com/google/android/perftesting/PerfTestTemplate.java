@@ -27,10 +27,10 @@ import android.support.test.uiautomator.Until;
 
 import com.google.android.perftesting.testrules.EnableLogcatDump;
 import com.google.android.perftesting.testrules.EnableNetStatsDump;
+import com.google.android.perftesting.testrules.EnableTestTracing;
 import com.google.android.perftesting.testrules.MeasureBatteryStats;
 import com.google.android.perftesting.testrules.MeasureExecutionTime;
 import com.google.android.perftesting.testrules.MeasureGraphicStats;
-import com.google.android.perftesting.testrules.EnableTestTracing;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -71,12 +71,12 @@ public class PerfTestTemplate {
 
     @BeforeClass
     public static void setupClass() {
-        // Open the app
+         // Open the app
         Context context = InstrumentationRegistry.getContext();
         final Intent intent = context.getPackageManager()
                 .getLaunchIntentForPackage(Config.TARGET_PACKAGE_NAME);
 
-        // Clear out any previous instances
+         // Clear out any previous instances
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
 

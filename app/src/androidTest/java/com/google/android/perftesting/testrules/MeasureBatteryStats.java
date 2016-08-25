@@ -40,7 +40,7 @@ import static com.google.android.perftesting.common.PerfTestingUtils.getTestFile
  *
  * <pre>
  * @Rule
- * public MeasureBatteryStats mEnableBatteryStatsDump = new MeasureBatteryStats();
+ * public MeasureBatteryStats mMeasureBatteryStats = new MeasureBatteryStats();
  * </pre>
  */
 public class MeasureBatteryStats extends ExternalResource {
