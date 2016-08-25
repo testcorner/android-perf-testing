@@ -41,14 +41,13 @@ import static com.google.android.perftesting.common.PerfTestingUtils.getTestFile
  * public EnablePostTestDumpSys mEnablePostTestDumpSys = new EnablePostTestDumpSys();
  * </pre>
  */
-public class EnablePostTestDumpsys extends ExternalResource {
+public class MeasureGraphicStats extends ExternalResource {
 
-    private Logger logger = Logger.getLogger(EnablePostTestDumpsys.class.getName());
-
+    private Logger logger = Logger.getLogger(MeasureGraphicStats.class.getName());
     private String mTestName;
     private String mTestClass;
-
-//    private static final String LOG_TAG = "EnablePostTestDumpsys";
+    private double jankPercentageThreshold;
+    private FileWriter fileWriter = null;
 
     @Override
     public Statement apply(Statement base, Description description) {
@@ -57,13 +56,30 @@ public class EnablePostTestDumpsys extends ExternalResource {
         return super.apply(base, description);
     }
 
+    public MeasureGraphicStats(double jankPercentageThreshold) {
+        this.jankPercentageThreshold = jankPercentageThreshold;
+    }
+
     @Override
     public void before() {
+        begin();
+    }
+
+    public void after() {
+        if(fileWriter == null){
+            end();
+        }
+    }
+
+    public void setJankPercentageThreshold(double jankPercentageThreshold) {
+        this.jankPercentageThreshold = jankPercentageThreshold;
+    }
+
+    public void begin() {
         try {
             ProcessBuilder builder = new ProcessBuilder();
             builder.command("dumpsys", "gfxinfo", "--reset",
                     // NOTE: Using the android app BuildConfig specifically.
-                    //com.google.android.perftesting.BuildConfig.APPLICATION_ID);
                     Config.TARGET_PACKAGE_NAME);
             Process process = builder.start();
             process.waitFor();
@@ -72,9 +88,8 @@ public class EnablePostTestDumpsys extends ExternalResource {
         }
     }
 
-    public void after() {
+    public void end() {
         if (android.os.Build.VERSION.SDK_INT >= 23) {
-            FileWriter fileWriter = null;
             BufferedReader bufferedReader = null;
             try {
                 Trace.beginSection("Taking Dumpsys");
@@ -92,6 +107,8 @@ public class EnablePostTestDumpsys extends ExternalResource {
                 bufferedReader = new BufferedReader(
                         new InputStreamReader(process.getInputStream()));
                 String line;
+                String strJankPercentageThreshold = String.valueOf("JankPercentageThreshold : "+ jankPercentageThreshold + " %");
+                fileWriter.append(strJankPercentageThreshold + "\n");
                 while ((line = bufferedReader.readLine()) != null) {
                     fileWriter.append(line);
                     fileWriter.append(System.lineSeparator());
