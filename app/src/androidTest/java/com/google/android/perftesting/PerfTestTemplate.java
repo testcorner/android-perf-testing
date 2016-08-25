@@ -25,14 +25,16 @@ import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.Until;
 
-import com.google.android.perftesting.common.PerfTest;
 import com.google.android.perftesting.testrules.EnableLogcatDump;
 import com.google.android.perftesting.testrules.EnableNetStatsDump;
-import com.google.android.perftesting.testrules.EnablePostTestDumpsys;
+import com.google.android.perftesting.testrules.MeasureBatteryStats;
+import com.google.android.perftesting.testrules.MeasureExecutionTime;
+import com.google.android.perftesting.testrules.MeasureGraphicStats;
 import com.google.android.perftesting.testrules.EnableTestTracing;
-import com.google.android.perftesting.testrules.GetExecutionTime;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,53 +48,61 @@ import org.junit.runner.RunWith;
 public class PerfTestTemplate {
     private static final int LAUNCH_TIMEOUT = 5000;
 
-    //--------------------rule chain: order testrules---------------------//
-
     public EnableTestTracing mEnableTestTracing = new EnableTestTracing();
 
-    public EnablePostTestDumpsys mEnablePostTestDumpsys = new EnablePostTestDumpsys();
+    public MeasureGraphicStats mMeasureGraphicStats = new MeasureGraphicStats(10);
 
     public EnableLogcatDump mEnableLogcatDump = new EnableLogcatDump();
 
     public EnableNetStatsDump mEnableNetStatsDump = new EnableNetStatsDump();
 
-    public GetExecutionTime mGetExecutionTime = new GetExecutionTime();
+    public MeasureExecutionTime mMeasureExecutionTime = new MeasureExecutionTime(4000);
+
+    public MeasureBatteryStats mMeasureBatteryStats = new MeasureBatteryStats(0.02);
 
     @Rule
     public TestRule chain = RuleChain
             .outerRule(mEnableLogcatDump)
             .around(mEnableTestTracing)
-            .around(mEnablePostTestDumpsys)
+            .around(mMeasureGraphicStats)
             .around(mEnableNetStatsDump)
-            .around(mGetExecutionTime);
+            .around(mMeasureBatteryStats)
+            .around(mMeasureExecutionTime);
 
-    //----------Beforeclass: Run Before Testcase------------//
     @BeforeClass
-    public static void setup() {
-         // Open the app
+    public static void setupClass() {
+        // Open the app
         Context context = InstrumentationRegistry.getContext();
         final Intent intent = context.getPackageManager()
                 .getLaunchIntentForPackage(Config.TARGET_PACKAGE_NAME);
 
-         // Clear out any previous instances
+        // Clear out any previous instances
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
 
         // Wait for the view to appear
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         device.wait(Until.hasObject(By.pkg(Config.TARGET_PACKAGE_NAME).depth(0)), LAUNCH_TIMEOUT);
+    }
 
+    @Before
+    public void setUp() {
         // Complete your setup here.
     }
 
-    //---------------------Testcase----------------------//
     @Test
     public void performanceTest() {
         // Put operations you want to measure during the test execution here.
     }
 
+    @After
+    public void tearDown() {
+        // Complete your teardown here.
+    }
+
     @AfterClass
-    public static void teardown() {
+    public static void teardownClass() {
+        //Close the app
     }
 
 }
