@@ -40,28 +40,20 @@ import static com.google.android.perftesting.common.PerfTestingUtils.getTestFile
  *
  * <pre>
  * @Rule
- * public EnableBatteryStatsDump mEnableBatteryStatsDump = new EnableBatteryStatsDump();
+ * public MeasureBatteryStats mEnableBatteryStatsDump = new MeasureBatteryStats();
  * </pre>
  */
-public class EnableBatteryStatsDump extends ExternalResource {
+public class MeasureBatteryStats extends ExternalResource {
 
-    private Logger logger = Logger.getLogger(EnableBatteryStatsDump.class.getName());
-
+    private Logger logger = Logger.getLogger(MeasureBatteryStats.class.getName());
     private String mTestName;
-
     private String mTestClass;
-
+    private double powerUseThresholdMah;
     private File mLogFileAbsoluteLocation = null;
 
-    public EnableBatteryStatsDump() { }
 
-//    private static final String LOG_TAG = "EnableBatteryStatsDump";
-
-    /**
-     * Allow the the log to be written to a specific location.
-     */
-    public EnableBatteryStatsDump(File logFileAbsoluteLocation) {
-        mLogFileAbsoluteLocation = logFileAbsoluteLocation;
+    public MeasureBatteryStats(double powerUseThresholdMah) {
+        this.powerUseThresholdMah = powerUseThresholdMah;
     }
 
     @Override
@@ -73,6 +65,20 @@ public class EnableBatteryStatsDump extends ExternalResource {
 
     @Override
     public void before() {
+        begin();
+    }
+
+    public void after() {
+        if (mLogFileAbsoluteLocation == null) {
+            end();
+        }
+    }
+
+    public void setpowerUseThresholdMah(double powerUseThresholdMah) {
+        this.powerUseThresholdMah = powerUseThresholdMah;
+    }
+
+    public void begin(){
         if (android.os.Build.VERSION.SDK_INT >= 21) {
             try {
                 ProcessBuilder builder = new ProcessBuilder();
@@ -86,7 +92,7 @@ public class EnableBatteryStatsDump extends ExternalResource {
         }
     }
 
-    public void after() {
+    public void end(){
         if (android.os.Build.VERSION.SDK_INT >= 21) {
             FileWriter fileWriter = null;
             BufferedReader bufferedReader = null;
@@ -106,6 +112,8 @@ public class EnableBatteryStatsDump extends ExternalResource {
                 bufferedReader = new BufferedReader(
                         new InputStreamReader(process.getInputStream()));
                 String line;
+                String strPowerUseThresholdMah = String.valueOf("PowerUseThresholdMah : "+ powerUseThresholdMah + " mah");
+                fileWriter.append(strPowerUseThresholdMah + "\n");
                 while ((line = bufferedReader.readLine()) != null) {
                     fileWriter.append(line);
                     fileWriter.append(System.lineSeparator());
