@@ -25,15 +25,14 @@ import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.Until;
-import android.util.Log;
 
 import com.google.android.perftesting.common.PerfTest;
 import com.google.android.perftesting.testrules.EnableLogcatDump;
 import com.google.android.perftesting.testrules.EnableNetStatsDump;
-import com.google.android.perftesting.testrules.EnablePostTestDumpsys;
+import com.google.android.perftesting.testrules.MeasureBatteryStats;
+import com.google.android.perftesting.testrules.MeasureGraphicStats;
 import com.google.android.perftesting.testrules.EnableTestTracing;
-import com.google.android.perftesting.testrules.GetExecutionTime;
-import com.google.android.perftesting.Config;
+import com.google.android.perftesting.testrules.MeasureExecutionTime;
 
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -53,7 +52,7 @@ import org.junit.rules.RuleChain;
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 18)
 // TODO(developer): Uncomment the below annotation to have this test added to the set of perf tests.
-@PerfTest
+// @PerfTest
 public class RunAppUIautomator extends RunListener {
     private static final String LOG_TAG = "RunAppUIautomator";
     private static final int LAUNCH_TIMEOUT = 5000;
@@ -69,21 +68,24 @@ public class RunAppUIautomator extends RunListener {
 
     public EnableTestTracing mEnableTestTracing = new EnableTestTracing();
 
-    public EnablePostTestDumpsys mEnablePostTestDumpsys = new EnablePostTestDumpsys();
+    public MeasureGraphicStats mMeasureGraphicStats = new MeasureGraphicStats(10);
 
     public EnableLogcatDump mEnableLogcatDump = new EnableLogcatDump();
 
     public EnableNetStatsDump mEnableNetStatsDump = new EnableNetStatsDump();
 
-    public GetExecutionTime mGetExecutionTime = new GetExecutionTime();
+    public MeasureExecutionTime mMeasureExecutionTime = new MeasureExecutionTime(4000);
+
+    public MeasureBatteryStats mMeasureBatteryStats = new MeasureBatteryStats(0.02);
 
     @Rule
     public TestRule chain = RuleChain
             .outerRule(mEnableLogcatDump)
             .around(mEnableTestTracing)
-            .around(mEnablePostTestDumpsys)
+            .around(mMeasureGraphicStats)
             .around(mEnableNetStatsDump)
-            .around(mGetExecutionTime);
+            .around(mMeasureBatteryStats)
+            .around(mMeasureExecutionTime);
 
     //----------Beforeclass: Run Before Testcase------------//
     @BeforeClass
