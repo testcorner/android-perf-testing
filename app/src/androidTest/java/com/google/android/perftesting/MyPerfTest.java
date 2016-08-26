@@ -51,11 +51,10 @@ public class MyPerfTest {
     private static final int LAUNCH_TIMEOUT = 5000;
 
     private UiDevice mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-    private UiObject2 mObject;
 
     public MeasureBatteryStats mMeasureBatteryStats = new MeasureBatteryStats(0.05);
-    public MeasureExecutionTime mMeasureExecutionTime = new MeasureExecutionTime(7000);
-    public MeasureGraphicStats mMeasureGraphicStats = new MeasureGraphicStats(10);
+    public MeasureExecutionTime mMeasureExecutionTime = new MeasureExecutionTime(9000);
+    public MeasureGraphicStats mMeasureGraphicStats = new MeasureGraphicStats(20);
 
     @Rule
     public TestRule chain = RuleChain
