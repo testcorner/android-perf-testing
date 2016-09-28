@@ -320,10 +320,13 @@ def analyze_data_files(dest_dir):
         return 1
 
 
-def xml(dest_dir,device_dir):
+def xml(dest_dir, device_dir, device_id, device_model):
+    device_model = device_model.replace("_", " ")
     xml_file_dir = os.path.join(dest_dir, 'app', 'build', 'outputs', 'androidTest-results', 'connected')
     for file in os.listdir(xml_file_dir):
-        xml_file_name = file
+        if re.search(device_model, file):
+            xml_file_name = file
+            xml_file_name
     tree = ElementTree.ElementTree(file = os.path.join(xml_file_dir, xml_file_name))
 
     for element in tree.findall('testcase'):
@@ -352,7 +355,8 @@ def xml(dest_dir,device_dir):
         if failures:
             ElementTree.SubElement(element, 'failure').text = '\n'.join(failures)
 
-    tree.write("results.xml")
+    tree.write(device_id + ".xml")
+
 
 
 
@@ -367,6 +371,8 @@ def main():
     device_id = sys.argv[1:][1] or null
     print 'Using device_id: ' + device_id
 
+    device_model = sys.argv[1:][2] or null
+    print 'Using device_id: ' + device_model
 
     # Organize test output by device in case multiple devices are being tested.
     dest_dir = os.path.join(dest_dir, "perftesting", device_id)
@@ -433,7 +439,7 @@ def main():
     # adding janky frames and execution time to the xml file
     dest_dir = sys.argv[1:][0] or '.'
     device_dir = os.path.join(dest_dir, "perftesting", device_id)
-    xml(dest_dir, device_dir)
+    xml(dest_dir, device_dir, device_id, device_model)
 
 
 if __name__ == '__main__':
