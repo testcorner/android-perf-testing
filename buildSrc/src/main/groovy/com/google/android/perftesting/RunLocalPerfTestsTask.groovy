@@ -27,7 +27,7 @@ import java.nio.file.Paths
 
 
 /**
- * Defined Gradle task to execute local android device tests using monkeyrunner. This task makes it
+ * Defined Gradle task to execute local android device tests using run_perf_tests.py. This task makes it
  * easier to run automated performance tests with out leaving AndroidStudio.
  */
 public class RunLocalPerfTestsTask extends DefaultTask {
@@ -37,14 +37,16 @@ public class RunLocalPerfTestsTask extends DefaultTask {
      * Default to not supplying a value unless a deviceId was set.
      */
     String mDeviceId = ""
+    String mDeviceModel = ""
 
     public RunLocalPerfTestsTask() {
         super()
         setGroup('verification')
         setDescription("Run performance tests on a specific device.")
         // Forces this task to always run.
-        if (deviceId != null) {
+        if (deviceId != null && deviceModel != null) {
             mDeviceId = deviceId
+            mDeviceModel = deviceModel
         }
         getOutputs().upToDateWhen({ return false })
     }
@@ -54,9 +56,9 @@ public class RunLocalPerfTestsTask extends DefaultTask {
         ProcessBuilder processBuilder = new ProcessBuilder()
 
         def rootDir = getProject().getRootDir().getAbsolutePath()
-        def monkeyScriptPath = Paths.get(rootDir, "run_perf_tests.py").toAbsolutePath().toString()
-        processBuilder.command('python', monkeyScriptPath, rootDir, mDeviceId)
-        processBuilder.redirectErrorStream()
+        def pythonScriptPath = Paths.get(rootDir, "run_perf_tests.py").toAbsolutePath().toString()
+        processBuilder.command('python', pythonScriptPath, rootDir, mDeviceId, mDeviceModel)
+        processBuilder.redirectErrorStream(true)
         Process process = processBuilder.start()
         process.waitFor()
 
@@ -65,7 +67,7 @@ public class RunLocalPerfTestsTask extends DefaultTask {
             mLogger.warn("Script: " + line)
         }
         if (process.exitValue() != 0) {
-            throw new GradleException("Test run didn't complete")
+            throw new GradleException("Test run didn't complete. Please check run_perf_tests.py and logger messages.")
         }
     }
 
@@ -76,5 +78,13 @@ public class RunLocalPerfTestsTask extends DefaultTask {
 
     public String getDeviceId() {
         return mDeviceId
+    }
+
+    public void setDeviceModel(String deviceModel) {
+        mDeviceModel = deviceModel
+    }
+
+    public String getDeviceModel() {
+        return mDeviceModel
     }
 }
