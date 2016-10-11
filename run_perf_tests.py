@@ -371,7 +371,7 @@ def xml(dest_dir, device_dir, device_id, device_model):
         if failures:
             ElementTree.SubElement(element, 'failure').text = '\n'.join(failures)
 
-    tree.write(device_id + ".xml")
+    tree.write(device_model + ".xml")
 
 
 
