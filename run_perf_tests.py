@@ -77,54 +77,33 @@ def perform_systrace(sdk_path, device_id, dest_dir, package_name):
             print 'ERROR executing systrace ' + os_error
     print 'Done systrace logging'
 
-
-# Enable the DUMP permission on the debuggable test APK (test APK because
+# Enable the Storage, Read, Dump permission on the debuggable test APK (test APK because
 # we declared the permission in the androidTest AndroidManifest.xml file.
-def enable_dump_permission(sdk_path, device_id, dest_dir, package_name):
-    """Enable the DUMP permission on the specified and installed Android
-    app.
-    """
-
-    print 'Starting dump permission grant'
-    perm_command = [os.path.join(sdk_path, 'platform-tools', 'adb'),
-                    '-s', device_id,
-                    'shell',
-                    'pm', 'grant', package_name,
-                    'android.permission.DUMP']
-    log_file_path = os.path.join(dest_dir, 'logs', 'enable_dump_perm.log')
-    with open(log_file_path, 'w') as log_file:
-        try:
-            subprocess.call(perm_command,
-                            stdout=log_file,
-                            stderr=subprocess.STDOUT,
-                            shell=False)
-        except OSError:
-            print 'ERROR executing permission grant.'
-
-
-# Enable the Storage permission on the debuggable test APK (test APK because
-# we declared the permission in the androidTest AndroidManifest.xml file.
-def enable_storage_permission(sdk_path, device_id, dest_dir, package_name):
-    """Enable the WRITE_EXTERNAL_STORAGE permission on the specified and
+def enable_permission(sdk_path, device_id, dest_dir, package_name):
+    """Enable the WRITE_EXTERNAL_STORAGE, READ_LOG, DUMP permission on the specified and
     installed Android app.
     """
+    enable_permission = ['android.permission.WRITE_EXTERNAL_STORAGE', 'android.permission.DUMP', 'android.permission.READ_LOGS']
+    log_file_name = ['enable_storage_perm.log', 'enable_dump_perm.log', 'enable_read_log_perm.log']
 
-    print 'Starting storage permission grant'
-    perm_command = [os.path.join(sdk_path, 'platform-tools',
-                                 'adb'),
-                    '-s', device_id,
-                    'shell',
-                    'pm', 'grant', package_name,
-                    'android.permission.WRITE_EXTERNAL_STORAGE']
-    log_file_path = os.path.join(dest_dir, 'logs', 'enable_storage_perm.log')
-    with open(log_file_path, 'w') as log_file:
-        try:
-            subprocess.call(perm_command,
-                            stdout=log_file,
-                            stderr=subprocess.STDOUT,
-                            shell=False)
-        except OSError:
-            print 'ERROR executing permission grant.'
+    for permission, file_name in zip(enable_permission, log_file_name):
+        print 'Starting permission grant'
+        perm_command = [os.path.join(sdk_path, 'platform-tools',
+                                     'adb'),
+                        '-s', device_id,
+                        'shell',
+                        'pm', 'grant', package_name,
+                        permission]
+        log_file_path = os.path.join(dest_dir, 'logs', file_name)
+
+        with open(log_file_path, 'w') as log_file:
+            try:
+                subprocess.call(perm_command,
+                                stdout=log_file,
+                                stderr=subprocess.STDOUT,
+                                shell=False)
+            except OSError:
+                print 'ERROR executing permission grant.'
 
 
 def clean_test_files(dest_dir):
@@ -450,8 +429,8 @@ def main():
     # ption.
     # device.press("KEYCODE_POWER", "DOWN_AND_UP")
 
-    enable_dump_permission(sdk_path, device_id, dest_dir, package_name)
-    enable_storage_permission(sdk_path, device_id, dest_dir, package_name)
+    #get the storage, read_log and dump permission
+    enable_permission(sdk_path, device_id, dest_dir, package_name)
 
 
     # Clear the dumpsys data for the next run must be done immediately
