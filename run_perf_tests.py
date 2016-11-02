@@ -46,6 +46,7 @@ def perform_test(device, package_name, device_id):
 
     # Run the test and print the timing result.
     cmd = "./gradlew connectedDebugAndroidTest"
+    #cmd = "./gradlew -Pandroid.testInstrumentationRunnerArguments.class=com.google.android.perftesting.SampleCode.SmoothnessSample connectedDebugAndroidTest"
     subprocess.Popen(cmd, shell=True, env=env).wait()
 
     print 'Done running tests'
@@ -95,53 +96,34 @@ def if_emulator(device_id):
         return True
     except:
         return False
-# Enable the DUMP permission on the debuggable test APK (test APK because
+
+# Enable the Storage, Read, Dump permission on the debuggable test APK (test APK because
 # we declared the permission in the androidTest AndroidManifest.xml file.
-def enable_dump_permission(sdk_path, device_id, dest_dir, package_name):
-    """Enable the DUMP permission on the specified and installed Android
-    app.
-    """
-
-    print 'Starting dump permission grant'
-    perm_command = [os.path.join(sdk_path, 'platform-tools', 'adb'),
-                    '-s', device_id,
-                    'shell',
-                    'pm', 'grant', package_name,
-                    'android.permission.DUMP']
-    log_file_path = os.path.join(dest_dir, 'logs', 'enable_dump_perm.log')
-    with open(log_file_path, 'w') as log_file:
-        try:
-            subprocess.call(perm_command,
-                            stdout=log_file,
-                            stderr=subprocess.STDOUT,
-                            shell=False)
-        except OSError:
-            print 'ERROR executing permission grant.'
-
-
-# Enable the Storage permission on the debuggable test APK (test APK because
-# we declared the permission in the androidTest AndroidManifest.xml file.
-def enable_storage_permission(sdk_path, device_id, dest_dir, package_name):
-    """Enable the WRITE_EXTERNAL_STORAGE permission on the specified and
+def enable_permission(sdk_path, device_id, dest_dir, package_name):
+    """Enable the WRITE_EXTERNAL_STORAGE, READ_LOG, DUMP permission on the specified and
     installed Android app.
     """
+    enable_permission = ['android.permission.WRITE_EXTERNAL_STORAGE', 'android.permission.DUMP', 'android.permission.READ_LOGS']
+    log_file_name = ['enable_storage_perm.log', 'enable_dump_perm.log', 'enable_read_log_perm.log']
 
-    print 'Starting storage permission grant'
-    perm_command = [os.path.join(sdk_path, 'platform-tools',
-                                 'adb'),
-                    '-s', device_id,
-                    'shell',
-                    'pm', 'grant', package_name,
-                    'android.permission.WRITE_EXTERNAL_STORAGE']
-    log_file_path = os.path.join(dest_dir, 'logs', 'enable_storage_perm.log')
-    with open(log_file_path, 'w') as log_file:
-        try:
-            subprocess.call(perm_command,
-                            stdout=log_file,
-                            stderr=subprocess.STDOUT,
-                            shell=False)
-        except OSError:
-            print 'ERROR executing permission grant.'
+    for permission, file_name in zip(enable_permission, log_file_name):
+        print 'Starting permission grant'
+        perm_command = [os.path.join(sdk_path, 'platform-tools',
+                                     'adb'),
+                        '-s', device_id,
+                        'shell',
+                        'pm', 'grant', package_name,
+                        permission]
+        log_file_path = os.path.join(dest_dir, 'logs', file_name)
+
+        with open(log_file_path, 'w') as log_file:
+            try:
+                subprocess.call(perm_command,
+                                stdout=log_file,
+                                stderr=subprocess.STDOUT,
+                                shell=False)
+            except OSError:
+                print 'ERROR executing permission grant.'
 
 
 def clean_test_files(dest_dir):
@@ -236,25 +218,25 @@ def get_package_name(test_data_dir):
 
 
 def analyze_battery_stats(test_data_dir):
-     failures = []
-     measurements = {}
-     results = (failures, measurements)
+    failures = []
+    measurements = {}
+    results = (failures, measurements)
 
-     stats_file = os.path.join(test_data_dir, 'battery.dumpsys.log')
-     if not os.path.exists(stats_file):
-         return results
+    stats_file = os.path.join(test_data_dir, 'battery.dumpsys.log')
+    if not os.path.exists(stats_file):
+        return results
 
-     with open(stats_file, 'r') as battery_file:
-         line = battery_file.read()
-         uid = re.search(r'top=(\w+):"%s"' % get_package_name(test_data_dir), line).group(1)
-         power_consumption = float(re.search(r'Uid\s' + uid + ': ([\w.]+)', line).group(1))
-         threshold = float(re.search(r'PowerUseThresholdMah : ([\d+\.]+) mah', line).group(1))
+    with open(stats_file, 'r') as battery_file:
+        line = battery_file.read()
+        uid = re.search(r'top=(\w+):"%s"' % get_package_name(test_data_dir), line).group(1)
+        power_consumption = float(re.search(r'Uid\s' + uid + ': ([\w.]+)', line).group(1))
+        threshold = float(re.search(r'PowerUseThresholdMah : ([\d+\.]+) mah', line).group(1))
 
-         measurements['Battery (mAh)'] = power_consumption
-         if power_consumption > threshold:
-             failures.append('Exceeding power Use. (threshold = %s)' % threshold)
+        measurements['Battery (mAh)'] = power_consumption
+        if power_consumption > threshold:
+            failures.append('Exceeding power Use. (threshold = %s)' % threshold)
 
-     return results
+    return results
 
 def analyze_graphic_stats(test_data_dir):
     failures = []
@@ -351,9 +333,9 @@ def show_console_stdout(folder_name, measurements):
 def remove_common_string(folder_name):
     base = folder_name
     base = base.replace("com.", "") \
-               .replace("google.", "") \
-               .replace("android.", "") \
-               .replace("perftesting.", "")
+        .replace("google.", "") \
+        .replace("android.", "") \
+        .replace("perftesting.", "")
     return base
 
 def find_emulaor_name(device_id):
@@ -379,7 +361,7 @@ def find_emulaor_name(device_id):
 def xml(dest_dir, device_dir, device_id, device_model, emulator_name):
     xml_file_dir = os.path.join(dest_dir, 'app', 'build', 'outputs', 'androidTest-results', 'connected')
     for file in os.listdir(xml_file_dir):
-            xml_file_name = file
+        xml_file_name = file
     tree = ElementTree.ElementTree(file = os.path.join(xml_file_dir, xml_file_name))
 
     for element in tree.findall('testcase'):
@@ -467,8 +449,8 @@ def main():
     # ption.
     # device.press("KEYCODE_POWER", "DOWN_AND_UP")
 
-    enable_dump_permission(sdk_path, device_id, dest_dir, package_name)
-    enable_storage_permission(sdk_path, device_id, dest_dir, package_name)
+    #get the storage, read_log and dump permission
+    enable_permission(sdk_path, device_id, dest_dir, package_name)
 
 
     # Clear the dumpsys data for the next run must be done immediately
