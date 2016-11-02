@@ -46,7 +46,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 18)
-//@PerfTest
+@PerfTest
 public class ExecTimeSample {
     private static final int LAUNCH_TIMEOUT = 2000;
     private UiDevice mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
@@ -88,6 +88,5 @@ public class ExecTimeSample {
     @AfterClass
     public static void teardownClass() throws RemoteException {
         //Close the app
-        config.close(LAUNCH_TIMEOUT);
     }
 }

@@ -101,7 +101,6 @@ public class PerfTestTemplate {
     @AfterClass
     public static void teardownClass() throws RemoteException {
         //Close the app
-        config.close(LAUNCH_TIMEOUT);
     }
 
 }
