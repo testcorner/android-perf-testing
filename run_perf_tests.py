@@ -46,6 +46,7 @@ def perform_test(device, package_name, device_id):
 
     # Run the test and print the timing result.
     cmd = "./gradlew connectedDebugAndroidTest"
+    #cmd = "./gradlew -Pandroid.testInstrumentationRunnerArguments.class=com.google.android.perftesting.SampleCode.SmoothnessSample connectedDebugAndroidTest"
     subprocess.Popen(cmd, shell=True, env=env).wait()
 
     print 'Done running tests'
@@ -216,25 +217,25 @@ def get_package_name(test_data_dir):
 
 
 def analyze_battery_stats(test_data_dir):
-     failures = []
-     measurements = {}
-     results = (failures, measurements)
+    failures = []
+    measurements = {}
+    results = (failures, measurements)
 
-     stats_file = os.path.join(test_data_dir, 'battery.dumpsys.log')
-     if not os.path.exists(stats_file):
-         return results
+    stats_file = os.path.join(test_data_dir, 'battery.dumpsys.log')
+    if not os.path.exists(stats_file):
+        return results
 
-     with open(stats_file, 'r') as battery_file:
-         line = battery_file.read()
-         uid = re.search(r'top=(\w+):"%s"' % get_package_name(test_data_dir), line).group(1)
-         power_consumption = float(re.search(r'Uid\s' + uid + ': ([\w.]+)', line).group(1))
-         threshold = float(re.search(r'PowerUseThresholdMah : ([\d+\.]+) mah', line).group(1))
+    with open(stats_file, 'r') as battery_file:
+        line = battery_file.read()
+        uid = re.search(r'top=(\w+):"%s"' % get_package_name(test_data_dir), line).group(1)
+        power_consumption = float(re.search(r'Uid\s' + uid + ': ([\w.]+)', line).group(1))
+        threshold = float(re.search(r'PowerUseThresholdMah : ([\d+\.]+) mah', line).group(1))
 
-         measurements['Battery (mAh)'] = power_consumption
-         if power_consumption > threshold:
-             failures.append('Exceeding power Use. (threshold = %s)' % threshold)
+        measurements['Battery (mAh)'] = power_consumption
+        if power_consumption > threshold:
+            failures.append('Exceeding power Use. (threshold = %s)' % threshold)
 
-     return results
+    return results
 
 def analyze_graphic_stats(test_data_dir):
     failures = []
@@ -331,9 +332,9 @@ def show_console_stdout(folder_name, measurements):
 def remove_common_string(folder_name):
     base = folder_name
     base = base.replace("com.", "") \
-               .replace("google.", "") \
-               .replace("android.", "") \
-               .replace("perftesting.", "")
+        .replace("google.", "") \
+        .replace("android.", "") \
+        .replace("perftesting.", "")
     return base
 
 def find_emulaor_name(device_id):
@@ -359,7 +360,7 @@ def find_emulaor_name(device_id):
 def xml(dest_dir, device_dir, device_id, device_model, emulator_name):
     xml_file_dir = os.path.join(dest_dir, 'app', 'build', 'outputs', 'androidTest-results', 'connected')
     for file in os.listdir(xml_file_dir):
-            xml_file_name = file
+        xml_file_name = file
     tree = ElementTree.ElementTree(file = os.path.join(xml_file_dir, xml_file_name))
 
     for element in tree.findall('testcase'):

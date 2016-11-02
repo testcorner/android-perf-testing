@@ -47,7 +47,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 18)
-//@PerfTest
+@PerfTest
 public class SmoothnessSample {
     private static final int LAUNCH_TIMEOUT = 2000;
     private UiDevice mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
@@ -95,6 +95,5 @@ public class SmoothnessSample {
     @AfterClass
     public static void teardownClass() throws RemoteException {
         //Close the app
-        config.close(LAUNCH_TIMEOUT);
     }
 }

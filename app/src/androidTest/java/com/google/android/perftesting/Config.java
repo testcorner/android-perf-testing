@@ -60,10 +60,4 @@ public class Config  extends ExternalResource {
 
         device.wait(Until.hasObject(By.pkg(Config.getPKGName()).depth(0)), launchTimeout);
     }
-
-    public static void close(int launchTimeout) throws RemoteException {
-        device.pressRecentApps();
-        device.wait(Until.hasObject(By.res("com.android.systemui:id/dismiss_task")), launchTimeout);
-        device.findObject(By.res("com.android.systemui:id/dismiss_task")).click();
-    }
 }
