@@ -50,8 +50,6 @@ public class EnableNetStatsDump extends ExternalResource {
 
     private File mLogFileAbsoluteLocation = null;
 
-//    private static final String LOG_TAG = "EnableNetStatsDump";
-
     public EnableNetStatsDump() {
 
     }
@@ -72,7 +70,7 @@ public class EnableNetStatsDump extends ExternalResource {
     }
 
     @Override
-    public void before() {
+    protected void before() {
         if (android.os.Build.VERSION.SDK_INT >= 21) {
             try {
                 ProcessBuilder builder = new ProcessBuilder();
@@ -85,7 +83,7 @@ public class EnableNetStatsDump extends ExternalResource {
         }
     }
 
-    public void after() {
+    protected void after() {
         if (android.os.Build.VERSION.SDK_INT >= 21) {
             FileWriter fileWriter = null;
             BufferedReader bufferedReader = null;

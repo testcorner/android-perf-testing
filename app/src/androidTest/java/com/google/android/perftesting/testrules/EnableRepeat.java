@@ -9,7 +9,7 @@ import com.google.android.perftesting.common.Repeat;
 
 
 
-public class RepeatRule implements TestRule{
+public class EnableRepeat implements TestRule{
 
     private static class RepeatStatement extends Statement {
         private static int time;
@@ -46,8 +46,6 @@ public class RepeatRule implements TestRule{
             }
         }
     }
-
-
 
   @Override
   public Statement apply( Statement statement, Description description ) {

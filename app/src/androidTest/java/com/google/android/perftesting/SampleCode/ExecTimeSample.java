@@ -16,22 +16,17 @@
 
 package com.google.android.perftesting.SampleCode;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.RemoteException;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
-import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.Until;
 
 import com.google.android.perftesting.Config;
 import com.google.android.perftesting.common.PerfTest;
-import com.google.android.perftesting.testrules.MeasureBatteryStats;
-import com.google.android.perftesting.testrules.MeasureExecutionTime;
-import com.google.android.perftesting.testrules.MeasureGraphicStats;
+import com.google.android.perftesting.testrules.EnableExecutionTime;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -40,8 +35,6 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
@@ -55,7 +48,7 @@ public class ExecTimeSample {
     public static Config config = new Config("com.google.android.perftesting");
 
     @Rule
-    public MeasureExecutionTime mMeasureExecutionTime = new MeasureExecutionTime(3000);
+    public EnableExecutionTime mEnableExecutionTime = new EnableExecutionTime(3000);
 
     @BeforeClass
     public static void setupClass() {
@@ -72,11 +65,11 @@ public class ExecTimeSample {
     public void turnPage() {
         // Put operations you want to measure during the test execution here.
         mDevice.findObject(By.text("Open Recycler View")).click();
-        mMeasureExecutionTime.begin();
+        mEnableExecutionTime.begin();
 
         mDevice.wait(Until.hasObject(By.res("com.google.android.perftesting:id/contactList")), LAUNCH_TIMEOUT);
 
-        mMeasureExecutionTime.end();
+        mEnableExecutionTime.end();
     }
 
     @After

@@ -46,7 +46,7 @@ public class EnablePerTestTraceFile extends ExternalResource {
     }
 
     @Override
-    public void before() {
+    protected void before() {
         try {
             ProcessBuilder builder = new ProcessBuilder();
             builder.command("atrace", "--async_start", "-a",
@@ -63,7 +63,7 @@ public class EnablePerTestTraceFile extends ExternalResource {
     }
 
     @Override
-    public void after() {
+    protected void after() {
         if (aTraceInUse) {
             try {
                 ProcessBuilder builder = new ProcessBuilder();

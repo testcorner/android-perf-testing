@@ -16,23 +16,17 @@
 
 package com.google.android.perftesting;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.RemoteException;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.test.uiautomator.By;
-import android.support.test.uiautomator.UiDevice;
-import android.support.test.uiautomator.Until;
 
 import com.google.android.perftesting.common.PerfTest;
+import com.google.android.perftesting.testrules.EnableBatteryStats;
+import com.google.android.perftesting.testrules.EnableExecutionTime;
+import com.google.android.perftesting.testrules.EnableGraphicStats;
 import com.google.android.perftesting.testrules.EnableLogcatDump;
 import com.google.android.perftesting.testrules.EnableNetStatsDump;
 import com.google.android.perftesting.testrules.EnableTestTracing;
-import com.google.android.perftesting.testrules.MeasureBatteryStats;
-import com.google.android.perftesting.testrules.MeasureExecutionTime;
-import com.google.android.perftesting.testrules.MeasureGraphicStats;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -58,24 +52,24 @@ public class PerfTestTemplate {
 
     public EnableTestTracing mEnableTestTracing = new EnableTestTracing();
 
-    public MeasureGraphicStats mMeasureGraphicStats = new MeasureGraphicStats(10);
+    public EnableGraphicStats mEnableGraphicStats = new EnableGraphicStats(10);
 
     public EnableLogcatDump mEnableLogcatDump = new EnableLogcatDump();
 
     public EnableNetStatsDump mEnableNetStatsDump = new EnableNetStatsDump();
 
-    public MeasureExecutionTime mMeasureExecutionTime = new MeasureExecutionTime(4000);
+    public EnableExecutionTime mEnableExecutionTime = new EnableExecutionTime(4000);
 
-    public MeasureBatteryStats mMeasureBatteryStats = new MeasureBatteryStats(0.02);
+    public EnableBatteryStats mEnableBatteryStats = new EnableBatteryStats(0.02);
 
     @Rule
     public TestRule chain = RuleChain
             .outerRule(mEnableLogcatDump)
             .around(mEnableTestTracing)
-            .around(mMeasureGraphicStats)
+            .around(mEnableGraphicStats)
             .around(mEnableNetStatsDump)
-            .around(mMeasureBatteryStats)
-            .around(mMeasureExecutionTime);
+            .around(mEnableBatteryStats)
+            .around(mEnableExecutionTime);
 
     @BeforeClass
     public static void setupClass() {

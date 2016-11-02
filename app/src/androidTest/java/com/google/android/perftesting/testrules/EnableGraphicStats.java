@@ -41,9 +41,9 @@ import static com.google.android.perftesting.common.PerfTestingUtils.getTestFile
  * public EnablePostTestDumpSys mEnablePostTestDumpSys = new EnablePostTestDumpSys();
  * </pre>
  */
-public class MeasureGraphicStats extends ExternalResource {
+public class EnableGraphicStats extends ExternalResource {
 
-    private Logger logger = Logger.getLogger(MeasureGraphicStats.class.getName());
+    private Logger logger = Logger.getLogger(EnableGraphicStats.class.getName());
     private String mTestName;
     private String mTestClass;
     private double jankPercentageThreshold;
@@ -56,16 +56,16 @@ public class MeasureGraphicStats extends ExternalResource {
         return super.apply(base, description);
     }
 
-    public MeasureGraphicStats(double jankPercentageThreshold) {
+    public EnableGraphicStats(double jankPercentageThreshold) {
         this.jankPercentageThreshold = jankPercentageThreshold;
     }
 
     @Override
-    public void before() {
+    protected void before() {
         begin();
     }
 
-    public void after() {
+    protected void after() {
         if(fileWriter == null){
             end();
         }

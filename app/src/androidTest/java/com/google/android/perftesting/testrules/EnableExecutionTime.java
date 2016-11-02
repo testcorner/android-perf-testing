@@ -18,9 +18,9 @@ import java.util.logging.Logger;
 import static com.google.android.perftesting.common.PerfTestingUtils.getTestFile;
 
 
-public class MeasureExecutionTime extends ExternalResource {
+public class EnableExecutionTime extends ExternalResource {
 
-    private Logger logger = Logger.getLogger(MeasureBatteryStats.class.getName());
+    private Logger logger = Logger.getLogger(EnableBatteryStats.class.getName());
     private String mTestName;
     private String mTestClass;
     private Long startTime;
@@ -35,14 +35,14 @@ public class MeasureExecutionTime extends ExternalResource {
         return super.apply(base, description);
     }
 
-    public MeasureExecutionTime(long thresholdMillis) {
+    public EnableExecutionTime(long thresholdMillis) {
         this.thresholdMillis = thresholdMillis;
     }
 
     @Override
-    public void before() { begin(); }
+    protected void before() { begin(); }
 
-    public void after() {
+    protected void after() {
         if (flag == false)
         {
             endTime = System.nanoTime();
