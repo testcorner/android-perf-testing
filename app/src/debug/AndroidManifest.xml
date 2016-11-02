@@ -7,5 +7,6 @@
          and the permission to be manually granted using ADB (which is done in the monkeyrunner
          script. -->
     <uses-permission android:name="android.permission.DUMP" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest>
