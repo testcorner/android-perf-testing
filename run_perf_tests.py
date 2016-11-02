@@ -50,21 +50,31 @@ def perform_test(device, package_name, device_id):
 
     print 'Done running tests'
 
-
 def perform_systrace(sdk_path, device_id, dest_dir, package_name):
     """Execution code for a systrace thread."""
 
     package_parameter = '--app=' + package_name
     systrace_path = os.path.join(sdk_path, 'platform-tools', 'systrace',
                                  'systrace.py')
-    systrace_command = ['python', systrace_path,
-                        '--serial=' + device_id,
-                        package_parameter,
-                        '--time=20',
-                        '-o', os.path.join(dest_dir, 'trace.html'),
-                        'gfx', 'input', 'view', 'wm', 'am', 'sm', 'hal',
-                        'app', 'res', 'dalvik', 'power', 'freq',
-                        'idle']
+    if if_emulator(device_id):
+        systrace_command = ['python', systrace_path,
+                            '--serial=' + device_id,
+                            package_parameter,
+                            '--time=20',
+                            '-o', os.path.join(dest_dir, 'trace.html'),
+                            'gfx', 'input', 'view', 'wm', 'am', 'sm', 'hal',
+                            'app', 'res', 'dalvik', 'power', 'freq',
+                            'idle']
+    else:
+        systrace_command = ['python', systrace_path,
+                            '--serial=' + device_id,
+                            package_parameter,
+                            '--time=20',
+                            '-o', os.path.join(dest_dir, 'trace.html'),
+                            'gfx', 'input', 'view', 'wm', 'am', 'sm', 'hal',
+                            'app', 'res', 'dalvik', 'power', 'freq',
+                            'idle', 'load']
+
     print 'Executing systrace'
     systrace_log_path = os.path.join(dest_dir, 'logs', 'capture_systrace.log')
     with open(systrace_log_path, 'w') as systrace_log:
@@ -76,6 +86,14 @@ def perform_systrace(sdk_path, device_id, dest_dir, package_name):
         except OSError:
             print 'ERROR executing systrace ' + os_error
     print 'Done systrace logging'
+
+def if_emulator(device_id):
+    emulator_port = device_id.split("-")
+    try:
+        telnetlib.Telnet("localhost", emulator_port[1])
+        return True
+    except:
+        return False
 
 # Enable the Storage, Read, Dump permission on the debuggable test APK (test APK because
 # we declared the permission in the androidTest AndroidManifest.xml file.
