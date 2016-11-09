@@ -45,8 +45,8 @@ def perform_test(device, package_name, device_id):
     env['ANDROID_SERIAL'] = device_id
 
     # Run the test and print the timing result.
-    cmd = "./gradlew connectedDebugAndroidTest"
-    #cmd = "./gradlew -Pandroid.testInstrumentationRunnerArguments.class=com.google.android.perftesting.SampleCode.SmoothnessSample connectedDebugAndroidTest"
+    #cmd = "./gradlew connectedDebugAndroidTest"
+    cmd = "./gradlew -Pandroid.testInstrumentationRunnerArguments.class=com.google.android.perftesting.suite.TestSuite connectedDebugAndroidTest"
     subprocess.Popen(cmd, shell=True, env=env).wait()
 
     print 'Done running tests'
