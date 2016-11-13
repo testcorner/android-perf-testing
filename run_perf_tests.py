@@ -36,7 +36,7 @@ from os.path import basename
 # Percentage of janky frames to detect to warn.
 
 
-def perform_test(device, package_name, device_id):
+def perform_test(device, package_name, device_id, test_suite):
     """Execution code for a test run thread."""
 
     print 'Starting test'
@@ -45,8 +45,7 @@ def perform_test(device, package_name, device_id):
     env['ANDROID_SERIAL'] = device_id
 
     # Run the test and print the timing result.
-    #cmd = "./gradlew connectedDebugAndroidTest"
-    cmd = "./gradlew -Pandroid.testInstrumentationRunnerArguments.class=com.google.android.perftesting.suite.TestSuite connectedDebugAndroidTest"
+    cmd = "./gradlew %s connectedDebugAndroidTest" % test_suite
     subprocess.Popen(cmd, shell=True, env=env).wait()
 
     print 'Done running tests'
@@ -179,7 +178,7 @@ def reset_graphics_dumpsys(device, package_name):
 
 
 def run_tests_and_systrace(sdk_path, device, device_id, dest_dir,
-                           package_name):
+                           package_name, test_suite):
     """Create and start threads to run tests and collect tracing information.
     """
     systrace_thread = threading.Thread(name='SystraceThread',
@@ -192,7 +191,8 @@ def run_tests_and_systrace(sdk_path, device, device_id, dest_dir,
                                    target=perform_test,
                                    args=(device,
                                          package_name,
-                                         device_id))
+                                         device_id,
+                                         test_suite))
     systrace_thread.start()
     test_thread.start()
     # Join the parallel thread processing to continue when both complete.
@@ -410,6 +410,9 @@ def main():
     device_model = sys.argv[1:][2] or null
     print 'Using device_model: ' + device_model
 
+    test_suite = sys.argv[1:][3] or None
+    print 'Using test_suite' + str(test_suite)
+
     # Organize test output by device in case multiple devices are being tested.
     dest_dir = os.path.join(dest_dir, "perftesting", device_id)
 
@@ -457,7 +460,7 @@ def main():
     reset_graphics_dumpsys(device, package_name)
 
     run_tests_and_systrace(sdk_path, device, device_id, dest_dir,
-                           package_name)
+                           package_name, test_suite)
 
     # Device files could be in either location on various devices.
     pull_device_data_files(sdk_path, device_id,
@@ -483,3 +486,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
