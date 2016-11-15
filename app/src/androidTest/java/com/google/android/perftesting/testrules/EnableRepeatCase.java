@@ -9,7 +9,7 @@ import com.google.android.perftesting.common.Repeat;
 
 
 
-public class EnableRepeat implements TestRule{
+public class EnableRepeatCase implements TestRule{
 
     private static class RepeatStatement extends Statement {
         private static int time;
@@ -27,7 +27,7 @@ public class EnableRepeat implements TestRule{
                 @Override
                 public void run() {
                     try {
-                        Thread.sleep(time);
+                        Thread.sleep(time * 1000);
                         counter.addNoOfThreadRunnig(-1);
                     } catch (Throwable throwable) {
                         throwable.printStackTrace();
@@ -46,6 +46,8 @@ public class EnableRepeat implements TestRule{
             }
         }
     }
+
+
 
   @Override
   public Statement apply( Statement statement, Description description ) {
