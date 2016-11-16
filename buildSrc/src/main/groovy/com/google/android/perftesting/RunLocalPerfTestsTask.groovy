@@ -38,7 +38,7 @@ public class RunLocalPerfTestsTask extends DefaultTask {
      */
     String mDeviceId = ""
     String mDeviceModel = ""
-
+    String mTestSuite = ""
     public RunLocalPerfTestsTask() {
         super()
         setGroup('verification')
@@ -48,6 +48,7 @@ public class RunLocalPerfTestsTask extends DefaultTask {
             mDeviceId = deviceId
             mDeviceModel = deviceModel
         }
+        mTestSuite = testSuite
         getOutputs().upToDateWhen({ return false })
     }
 
@@ -57,7 +58,7 @@ public class RunLocalPerfTestsTask extends DefaultTask {
 
         def rootDir = getProject().getRootDir().getAbsolutePath()
         def pythonScriptPath = Paths.get(rootDir, "run_perf_tests.py").toAbsolutePath().toString()
-        processBuilder.command('python', pythonScriptPath, rootDir, mDeviceId, mDeviceModel)
+        processBuilder.command('python', pythonScriptPath, rootDir, mDeviceId, mDeviceModel, mTestSuite)
         processBuilder.redirectErrorStream(true)
         Process process = processBuilder.start()
         process.waitFor()
@@ -87,4 +88,13 @@ public class RunLocalPerfTestsTask extends DefaultTask {
     public String getDeviceModel() {
         return mDeviceModel
     }
+
+    public void setTestSuite(String testSuite) {
+        mTestSuite = testSuite
+    }
+
+    public String getTestSuite() {
+        return mTestSuite
+    }
+
 }
