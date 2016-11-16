@@ -1,23 +1,16 @@
-import com.android.build.gradle.internal.dsl.ProductFlavor
 import com.google.android.perftesting.PerfTestTaskGeneratorPlugin
 apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
-    String path
-    def config = defaultConfig {
+
+    defaultConfig {
         applicationId "com.google.android.perftesting"
         minSdkVersion 18
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
-        if(project.hasProperty("select")) {
-            path = '-Pandroid.testInstrumentationRunnerArguments.class=com.google.android.perftesting.' + project.property("select")
-            System.setProperty("select", path)
-        }
-        else
-            System.setProperty("select", " ")
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments listener : 'com.google.android.perftesting.TestListener',
@@ -26,7 +19,6 @@ android {
         testHandleProfiling true
         testFunctionalTest true
     }
-    config
     buildTypes {
         debug {
             debuggable true
