@@ -27,7 +27,6 @@ import org.junit.runners.model.Statement;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,9 +45,9 @@ import static com.google.android.perftesting.common.PerfTestingUtils.getTestFile
  * public MeasureBatteryStats mMeasureBatteryStats = new MeasureBatteryStats();
  * </pre>
  */
-public class MeasureBatteryStats extends ExternalResource {
+public class EnableBatteryStats extends ExternalResource {
 
-    private Logger logger = Logger.getLogger(MeasureBatteryStats.class.getName());
+    private Logger logger = Logger.getLogger(EnableBatteryStats.class.getName());
     private String mTestName;
     private String mTestClass;
     private double powerUseThresholdMah;
@@ -56,7 +55,7 @@ public class MeasureBatteryStats extends ExternalResource {
     private FileWriter fileWriter = null;
 
 
-    public MeasureBatteryStats(double powerUseThresholdMah) {
+    public EnableBatteryStats(double powerUseThresholdMah) {
         this.powerUseThresholdMah = powerUseThresholdMah;
     }
 
@@ -68,11 +67,11 @@ public class MeasureBatteryStats extends ExternalResource {
     }
 
     @Override
-    public void before() {
+    protected void before() {
         begin();
     }
 
-    public void after() {
+    protected void after() {
         if (mLogFileAbsoluteLocation == null) {
             end();
         }

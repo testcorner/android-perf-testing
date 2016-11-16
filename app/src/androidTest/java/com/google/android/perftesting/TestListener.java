@@ -58,7 +58,7 @@ public class TestListener extends RunListener {
 
         mEnableDeviceGetPropsInfo = new EnableDeviceGetPropsInfo(
                 PerfTestingUtils.getTestRunFile("getprops.log"));
-        mEnableDeviceGetPropsInfo.before();
+        mEnableDeviceGetPropsInfo.begin();
 
         // This isn't available until the next version of Google Play services.
         // resetLocationRequestTracking();
@@ -75,7 +75,7 @@ public class TestListener extends RunListener {
             Log.w(LOG_TAG, "Test run finished");
 
             if (mEnableDeviceGetPropsInfo != null) {
-                mEnableDeviceGetPropsInfo.after();
+                mEnableDeviceGetPropsInfo.end();
             }
             Log.w(LOG_TAG, "getprops collected.");
 

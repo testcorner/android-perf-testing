@@ -66,11 +66,11 @@ public class EnableDeviceGetPropsInfo extends ExternalResource {
     }
 
     @Override
-    public void before() {
+    protected void before() {
         // Do nothing.
     }
 
-    public void after() {
+    protected void after() {
         FileWriter fileWriter = null;
         BufferedReader bufferedReader = null;
         try {
@@ -106,5 +106,13 @@ public class EnableDeviceGetPropsInfo extends ExternalResource {
                 try { bufferedReader.close(); } catch (Exception e) { e.printStackTrace(); }
             }
         }
+    }
+
+    public void begin(){
+        // Do nothing.
+    }
+
+    public void end(){
+        after();
     }
 }

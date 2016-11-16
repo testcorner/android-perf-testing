@@ -16,8 +16,6 @@
 
 package com.google.android.perftesting.SampleCode;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.RemoteException;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
@@ -28,9 +26,7 @@ import android.support.test.uiautomator.Until;
 
 import com.google.android.perftesting.Config;
 import com.google.android.perftesting.common.PerfTest;
-import com.google.android.perftesting.testrules.MeasureBatteryStats;
-import com.google.android.perftesting.testrules.MeasureExecutionTime;
-import com.google.android.perftesting.testrules.MeasureGraphicStats;
+import com.google.android.perftesting.testrules.EnableBatteryStats;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -39,8 +35,6 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
@@ -54,7 +48,7 @@ public class BatterySample {
     public static Config config = new Config("com.google.android.perftesting");
 
     @Rule
-    public MeasureBatteryStats mMeasureBatteryStats = new MeasureBatteryStats(0.05);
+    public EnableBatteryStats mEnableBatteryStats = new EnableBatteryStats(0.05);
 
     @BeforeClass
     public static void setupClass() {
@@ -70,7 +64,7 @@ public class BatterySample {
     @Test
     public void actionRepeat() {
         // Put operations you want to measure during the test execution here.
-        mMeasureBatteryStats.begin();
+        mEnableBatteryStats.begin();
 
         // continuously repeat a series of action
         for (int i = 0; i < 5; i++) {
@@ -90,7 +84,7 @@ public class BatterySample {
             mDevice.pressBack();
         }
 
-        mMeasureBatteryStats.end();
+        mEnableBatteryStats.end();
     }
 
     @After

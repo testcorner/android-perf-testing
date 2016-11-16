@@ -52,7 +52,7 @@ public class EnableLogcatDump extends ExternalResource {
     /**
      * Clear logcat buffer prior to test run.
      */
-    public void before() throws Throwable {
+    protected void before() throws Throwable {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.command("logcat", "-c");
@@ -68,7 +68,7 @@ public class EnableLogcatDump extends ExternalResource {
     /**
      * Extract logcat buffer to a file ater test run.
      */
-    public void after() {
+    protected void after() {
         try {
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 Trace.beginSection("Taking logcat");
