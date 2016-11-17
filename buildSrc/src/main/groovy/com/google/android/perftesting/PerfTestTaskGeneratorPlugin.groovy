@@ -10,7 +10,6 @@ import org.gradle.api.logging.Logger
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-
 /**
  * Gradle Plugin automating the creation of performance testing tasks for each device currently
  * connected to the current system.
@@ -64,7 +63,6 @@ public class PerfTestTaskGeneratorPlugin implements Plugin<Project> {
                 dependsOn: dependentTasks,
                 description: 'Run performance tests on all connected devices.')
 
-        String androidTestSuite = System.getProperty("select")
         // Create a perf test task for each connected device.
         connectedDeviceDict.each {androidDeviceModel, androidDeviceId ->
             RunLocalPerfTestsTask newTask = (RunLocalPerfTestsTask) project.tasks.create(
@@ -72,7 +70,6 @@ public class PerfTestTaskGeneratorPlugin implements Plugin<Project> {
                     type: RunLocalPerfTestsTask)
             newTask.deviceId = androidDeviceId
             newTask.deviceModel = androidDeviceModel
-            newTask.testSuite = androidTestSuite
 
             // Ensure each device-specific task is run by the parent perf test task.
             runLocalPerfTests.dependsOn(newTask)
@@ -147,6 +144,4 @@ public class PerfTestTaskGeneratorPlugin implements Plugin<Project> {
         logger.warn("Found connected devices for local performance testing tasks: " + devices)
         return devices
     }
-
-
 }
